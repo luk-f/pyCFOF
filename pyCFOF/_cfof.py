@@ -6,8 +6,6 @@ import warnings
 
 from typing import List
 
-import numbers
-
 from sklearn.neighbors._base import NeighborsBase
 from sklearn.neighbors._base import KNeighborsMixin
 from sklearn.base import OutlierMixin
