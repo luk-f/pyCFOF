@@ -1,4 +1,4 @@
-# CFOF
+# pyCFOF
 
 ## Pour commencer
 
