@@ -6,9 +6,8 @@ import warnings
 
 import numbers
 
-from sklearn.neighbors.base import NeighborsBase
-from sklearn.neighbors.base import KNeighborsMixin
-from sklearn.neighbors.base import UnsupervisedMixin
+from sklearn.neighbors._base import NeighborsBase
+from sklearn.neighbors._base import KNeighborsMixin
 from sklearn.base import OutlierMixin
 
 from sklearn.utils.validation import check_is_fitted
@@ -16,7 +15,7 @@ from sklearn.utils.validation import check_is_fitted
 __all__ = ["ConcentrationFreeOutlierFactor"]
 
 
-class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin, UnsupervisedMixin,
+class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
                                      OutlierMixin):
     """Unsupervised Outlier Detection using Concentration Free Outlier Factor (CFOF)
 
@@ -125,17 +124,18 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin, Unsupervise
            CFOF: A Concentration Free Measure for Anomaly Detection.
            In ACM Transactions on Knowledge Discovery from Data.
     """
-    def __init__(self, n_neighbors=20, rho=[0.1, 1.1], algorithm='auto', leaf_size=30,
-                 metric='minkowski', p=2, metric_params=None,
+    def __init__(self, n_neighbors: int = 20, rho=None, algorithm: str = 'auto', leaf_size: int = 30,
+                 metric: str = 'minkowski', p: int = 2, metric_params=None,
                  contamination="auto", n_jobs=None):
         super().__init__(
             n_neighbors=n_neighbors,
             algorithm=algorithm,
             leaf_size=leaf_size, metric=metric, p=p,
             metric_params=metric_params, n_jobs=n_jobs)
+        if rho is None:
+            rho = [0.1, 1.1]
         self.contamination = contamination
         self.rho = rho
-
 
     def _check_parameters(self, X):
         """
