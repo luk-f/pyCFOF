@@ -4,6 +4,8 @@
 import numpy as np
 import warnings
 
+from typing import List
+
 import numbers
 
 from sklearn.neighbors._base import NeighborsBase
@@ -124,16 +126,26 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
            CFOF: A Concentration Free Measure for Anomaly Detection.
            In ACM Transactions on Knowledge Discovery from Data.
     """
-    def __init__(self, n_neighbors: int = 20, rho=None, algorithm: str = 'auto', leaf_size: int = 30,
-                 metric: str = 'minkowski', p: int = 2, metric_params=None,
-                 contamination="auto", n_jobs=None):
+    def __init__(self, n_neighbors: int = 20, rho: List[float] = None,
+                 algorithm: str = 'auto', leaf_size: int = 30,
+                 metric: str = 'minkowski', p=2, metric_params=None,
+                 contamination: str = "auto", n_jobs=None):
         super().__init__(
             n_neighbors=n_neighbors,
             algorithm=algorithm,
             leaf_size=leaf_size, metric=metric, p=p,
             metric_params=metric_params, n_jobs=n_jobs)
         if rho is None:
-            rho = [0.1, 1.1]
+            rho = [0.1]
+        try:
+            rho = [x for x in rho if 0.0 < x < 1.0]
+        except Exception as e:
+            print(f'Rho type error: must be a float: {rho}.')
+            print(f'Default value applied. {type(e)}: {e}')
+            rho = [0.1]
+        finally:
+            if not rho:
+                rho = [0.1]
         self.contamination = contamination
         self.rho = rho
 
@@ -145,15 +157,6 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
         -------
         self : object
         """
-        if type(self.rho) is list:
-            if all(x < 1.0 for x in self.rho):
-                self.rho.append(1.1)
-        elif isinstance(self.rho, numbers.Real) and 0.0 < self.rho < 1.0:
-            self.rho = [self.rho, 1.1]
-        else:
-            print("The rho value must be a float or list of float between 0.0 and 1.0."
-                  "\nInit by default rho = 0.1")
-            self.rho = [0.1, 1.1]
         self.rho = sorted(self.rho)
 
         if self.n_neighbors is None:
@@ -229,7 +232,7 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
                 raise ValueError("contamination must be in (0, 0.5], "
                                  "got: %f" % self.contamination)
 
-        super().fit(X)
+        self._fit(X)
 
         n_samples = self._fit_X.shape[0]
         if self.n_neighbors > n_samples:
@@ -272,7 +275,7 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
         check_is_fitted(self, ["offset_", "outlier_factor_",
                                "n_neighbors_", "_distances_fit_X_"])
 
-        is_inlier = np.ones((self._fit_X.shape[0], len(self.rho)-1), dtype=int)
+        is_inlier = np.ones((self._fit_X.shape[0], len(self.rho)), dtype=int)
         is_inlier[self.outlier_factor_ > self.offset_] = -1
 
         return is_inlier
@@ -300,7 +303,7 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
         k_tmp = np.ones(n_samples, dtype=np.dtype('uint32'))
         current_step = np.zeros(n_samples, dtype=np.dtype('uint32'))
         counter = np.zeros(n_samples, dtype=np.dtype('uint32'))
-        score_list = np.ones((n_samples, len(self.rho)-1))
+        score_list = np.ones((n_samples, len(self.rho)))
 
         logical_k_tmp = 1
 
@@ -310,18 +313,20 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
         k_tmp[not_same_neighbor[logical_k_tmp - 1]] += 1
         logical_k_tmp += 1
 
+        rho_with_extra = self.rho + [1.1]
+
         for col_k in neighbors_indices.T:
 
             counter = np.add(counter, np.bincount(col_k, minlength=n_samples))
 
-            where_goal_rho = np.where(counter > n_samples * np.take(self.rho, current_step))[0]
+            where_goal_rho = np.where(counter > n_samples * np.take(rho_with_extra, current_step))[0]
             score_list[where_goal_rho, current_step[where_goal_rho]] = k_tmp[where_goal_rho]
 
-            current_step = np.where(counter > n_samples * np.take(self.rho, current_step),
+            current_step = np.where(counter > n_samples * np.take(rho_with_extra, current_step),
                                     np.add(current_step, 1),
                                     current_step)
 
-            if np.all(current_step >= len(self.rho) - 1):
+            if np.all(current_step >= len(self.rho)):
                 break
 
             k_tmp[not_same_neighbor[logical_k_tmp-1]] += 1
