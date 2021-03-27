@@ -1,4 +1,4 @@
-[![Upload Python Package](https://github.com/luk-f/pyCFOF/actions/workflows/python-publish.yml/badge.svg)](https://github.com/luk-f/pyCFOF/actions/workflows/python-publish.yml)
+[![PyPI](https://github.com/luk-f/pyCFOF/actions/workflows/python-publish.yml/badge.svg)](https://github.com/luk-f/pyCFOF/actions/workflows/python-publish.yml)
 
 # pyCFOF
 
