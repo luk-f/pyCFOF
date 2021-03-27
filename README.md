@@ -1,4 +1,4 @@
-# CFOF
+# pyCFOF
 
 ## Pour commencer
 
@@ -25,4 +25,8 @@ Lancer `pip install -r requirements.txt` ou `python3 -m pip install -r requireme
 ## Remerciements
 
 Développements des travaux de :
- - [CFOF: A Concentration Free Measure for Anomaly Detection, par Fabrizio Angiulli](https://dl.acm.org/doi/abs/10.1145/3362158)
+ - Fabrizio Angiulli, [CFOF: A Concentration Free Measure for Anomaly Detection. ACM Transactions on Knowledge Discovery from Data (TKDD), 14(1):Article 4, 2020](https://dl.acm.org/doi/abs/10.1145/3362158)
+
+
+Utilisation de :
+ - [Scikit-learn: Machine Learning in Python, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011](https://scikit-learn.org/stable/index.html)
