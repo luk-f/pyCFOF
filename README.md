@@ -12,7 +12,7 @@ Lancer `pip install -r requirements.txt` ou `python3 -m pip install -r requireme
 
     >>> from pyCFOF import ConcentrationFreeOutlierFactor as CFOF
     >>> X = [[-1.1], [0.2], [101.1], [0.3]]
-    >>> cfof = CFOF(n_neighbors=len(X), rho=0.1)
+    >>> cfof = CFOF(n_neighbors=len(X), rho=[0.1])
     >>> cfof.fit_predict(X)
     array([[ 1],
            [ 1],
