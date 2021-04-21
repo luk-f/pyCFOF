@@ -268,7 +268,7 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
         Returns
         -------
         is_inlier : ndarray of shape (n_samples,)
-            Returns -1 for anomalies/outliers and +1 for inliers.
+            Returns -1 for anomalies/outliers and 1 for inliers.
         """
         check_is_fitted(self, ["offset_", "outlier_factor_",
                                "n_neighbors_", "_distances_fit_X_"])
