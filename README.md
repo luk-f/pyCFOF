@@ -8,6 +8,8 @@
 
 Lancer `pip install -r requirements.txt` ou `python3 -m pip install -r requirements.txt`.
 
+Ou à partir du dépôt `pip install Concentration-Free-Outlier-Factor`.
+
 ### Utilisation
 
     >>> from pyCFOF import ConcentrationFreeOutlierFactor as CFOF
