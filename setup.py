@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pyCFOF",
+    name="Concentration Free Outlier Factor",
     version="0.1.1",
     author="Lucas Foulon",
     author_email="lucas.foulon@gmail.com",
