@@ -28,6 +28,7 @@ jobs:
             Changes in this Release
           draft: false
           prerelease: false
+          skip_existing: true
 
   build-n-publish:
     name: Build and publish package
