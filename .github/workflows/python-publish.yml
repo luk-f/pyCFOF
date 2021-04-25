@@ -1,9 +1,13 @@
 # This workflow will upload a Python Package using Twine when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
-name: Publish Python distributions to PyPI
+name: Upload Python Package & Publish Python distributions to PyPI
 
-on: push
+on: 
+  push:
+  # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   release:
@@ -27,6 +31,7 @@ jobs:
 
   build-n-publish:
     name: Build and publish package
+    needs: release
     runs-on: ubuntu-latest
 
     steps:
