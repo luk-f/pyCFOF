@@ -3,28 +3,51 @@
 
 name: Publish Python distributions to PyPI
 
-on: push
+on:
+  # Triggers the workflow on push to the master branch
+  push:
+    branches: [ master ]
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
+
   build-n-publish:
-    name: Build and publish package
+    name: "Build and publish package"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Install pypa/build
-      run: |
-        python -m pip install build --user
-    - name: Build a binary wheel and a source tarball
-      run: |
-        python -m pip install --upgrade pip
-        python -m build --sdist --wheel --outdir dist/ .
-    - name: Publish
-      if: startsWith(github.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        password: ${{ secrets.PYCFOF_TOKEN_PYPI }}
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Sets up python3
+      - name: "Set up Python"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      # Installs and upgrades pip, installs other dependencies and installs the package from setup.py
+      - name: "Installs and upgrades pip, installs other dependencies and installs the package from setup.py"
+        run: |
+          # Upgrade pip
+          python -m pip install --upgrade pip
+          # Install build deps
+          python -m pip install setuptools wheel twine
+          # If requirements.txt exists, install from it
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Install the package from setup.py
+          python setup.py install
+
+
+      - name: "Build a binary wheel and a source tarball and uploads to PyPI"
+        run: |
+          python setup.py sdist bdist_wheel
+          python -m twine upload dist/*
+        env:
+            TWINE_USERNAME: __token__
+            TWINE_PASSWORD: ${{ secrets.PYCFOF_TOKEN_PYPI }}
+        #if: startsWith(github.ref, 'refs/tags')
+        # uses: pypa/gh-action-pypi-publish@master
+        # with:
+        #   password: ${{ secrets.PYCFOF_TOKEN_PYPI }}
