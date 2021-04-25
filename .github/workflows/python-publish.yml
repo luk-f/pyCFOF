@@ -34,17 +34,6 @@ jobs:
           python -m pip install --upgrade pip
           # Install build deps
           python -m pip install setuptools wheel twine
-          # If requirements.txt exists, install from it
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          # Install the package from setup.py
-          python setup.py install
-
-      # # Tests with unittest
-      # - name: Test with unittest
-      #   run: |
-      #     cd tests
-      #     python -m unittest discover
-      #     cd ..
 
       - name: "Build a binary wheel and a source tarball and uploads to PyPI"
         run: |
@@ -53,7 +42,3 @@ jobs:
         env:
             TWINE_USERNAME: __token__
             TWINE_PASSWORD: ${{ secrets.PYCFOF_TOKEN_PYPI }}
-        #if: startsWith(github.ref, 'refs/tags')
-        # uses: pypa/gh-action-pypi-publish@master
-        # with:
-        #   password: ${{ secrets.PYCFOF_TOKEN_PYPI }}
