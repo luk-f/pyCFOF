@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pyCFOF",
-    version="0.2.1",
+    version="0.1.1",
     author="Lucas Foulon",
     author_email="lucas.foulon@gmail.com",
     description="Calculate the Concentration Free Outlier Factor score, based on Angiulli's work",
