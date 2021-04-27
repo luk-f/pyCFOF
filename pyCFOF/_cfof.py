@@ -304,9 +304,11 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
         score_list = np.ones((n_samples, len(self.rho)))
 
         logical_k_tmp = 1
-
+        
+        # used to not count two times same distance
         not_same_neighbor = (np.diff(np.concatenate((np.zeros_like(self._distances_fit_X_.T[0]).reshape(-1, 1),
                                                      self._distances_fit_X_), axis=1)) != 0).T
+        not_same_neighbor = np.concatenate(([np.zeros_like(not_same_neighbor[0]).T], not_same_neighbor))
 
         k_tmp[not_same_neighbor[logical_k_tmp - 1]] += 1
         logical_k_tmp += 1
@@ -327,6 +329,7 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
             if np.all(current_step >= len(self.rho)):
                 break
 
+            not_same_neighbor[logical_k_tmp-1]
             k_tmp[not_same_neighbor[logical_k_tmp-1]] += 1
             logical_k_tmp += 1
 
