@@ -305,8 +305,31 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
 
         logical_k_tmp = 1
 
+        # it is used because knn sklearn considere same distance as same neighbor ?
+        # don't remember exactly how there are considered
         not_same_neighbor = (np.diff(np.concatenate((np.zeros_like(self._distances_fit_X_.T[0]).reshape(-1, 1),
                                                      self._distances_fit_X_), axis=1)) != 0).T
+        # TODO print if False exist to see if bug appears
+        if False in np.array(not_same_neighbor):
+            print("Yes, contains False value")
+        # Edit : no...
+        # print(self._distances_fit_X_)
+        print(self._distances_fit_X_.shape)
+        print(self._distances_fit_X_.T[0].shape)
+        print(np.zeros_like(self._distances_fit_X_.T[0]).shape)
+        print(np.zeros_like(self._distances_fit_X_.T[0]).reshape(-1, 1).shape)
+        print(np.concatenate((np.zeros_like(self._distances_fit_X_.T[0]).reshape(-1, 1),
+                                                     self._distances_fit_X_), axis=1).shape)
+        print("---")
+
+        # why shape (n-1, n) ?
+        print(not_same_neighbor.shape)
+        print(not_same_neighbor)
+        print(not_same_neighbor[0].shape)
+        # return score_list
+        # Edit okay need to add zeros array ?
+        not_same_neighbor = np.concatenate(([np.zeros_like(not_same_neighbor[0]).T], not_same_neighbor))
+        # yes, it works
 
         k_tmp[not_same_neighbor[logical_k_tmp - 1]] += 1
         logical_k_tmp += 1
@@ -327,6 +350,7 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
             if np.all(current_step >= len(self.rho)):
                 break
 
+            not_same_neighbor[logical_k_tmp-1]
             k_tmp[not_same_neighbor[logical_k_tmp-1]] += 1
             logical_k_tmp += 1
 
