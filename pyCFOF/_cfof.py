@@ -319,13 +319,15 @@ class ConcentrationFreeOutlierFactor(NeighborsBase, KNeighborsMixin,
 
             counter = np.add(counter, np.bincount(col_k, minlength=n_samples))
 
-            where_goal_rho = np.where(counter >= n_samples * np.take(rho_with_extra, current_step))[0]
+            where_goal_rho = counter >= n_samples * np.take(rho_with_extra, current_step)
 
             score_list[where_goal_rho, current_step[where_goal_rho]] = k_tmp[where_goal_rho]
 
-            current_step = np.where(counter >= n_samples * np.take(rho_with_extra, current_step),
-                                    np.add(current_step, 1),
-                                    current_step)
+            while where_goal_rho.any():
+                current_step = np.where(where_goal_rho,
+                                        np.add(current_step, 1),
+                                        current_step)
+                where_goal_rho = counter >= n_samples * np.take(rho_with_extra, current_step)
 
             if np.all(current_step >= len(self.rho)):
                 break
